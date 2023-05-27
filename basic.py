@@ -62,6 +62,11 @@ class Lexer:
         self.pos += 1
         self.current_chr = self.text[self.pos] if self.pos < len(
             self.text) else None
+        self.next_chr = ''
+        if self.pos + 1 < len(self.text):
+            self.next_chr = self.text[self.pos + 1]
+        else:
+            self.next_chr = None
 
     def make_tokens(self) -> List[str]:
         tokens: List[str] = []
@@ -71,7 +76,6 @@ class Lexer:
                 self.advance()
             elif self.current_chr in DIGITS:
                 tokens.append(self.make_number())
-                self.advance()
             elif self.current_chr == '+':
                 tokens.append(Token(TT_PLUS))
                 self.advance()
@@ -93,7 +97,7 @@ class Lexer:
             else:
                 char = self.current_chr
                 self.advance()
-                return [], IllegalCharError("'", char, "'")
+                return [], IllegalCharError("'" + char + "'")
 
         return tokens, None
 
@@ -108,6 +112,7 @@ class Lexer:
                 num_str += '.'
             else:
                 num_str += self.current_chr
+
             self.advance()
 
         if dot_count == 0:
